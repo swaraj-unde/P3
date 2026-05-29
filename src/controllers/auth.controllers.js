@@ -194,4 +194,44 @@ const verifyEmail = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, loginUser, logoutUser, getCurrentUser, verifyEmail };
+const resendEmailVerification = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+        throw new ApiError(404, "User does not Exist");
+    }
+
+    if (user.isEmailVerified) {
+        throw new ApiError(409, "Email is Already Verified");
+    }
+
+    const { unHashedToken, hashedToken, tokenExpiry } =
+        user.generateTemporaryToken();
+
+    user.emailVerificationToken = hashedToken;
+    user.emailVerificationExpiry = tokenExpiry;
+
+    await user.save({ validateBeforeSave: false });
+
+    await sendEmail({
+        email: user?.email,
+        subject: "Please Verify Your Email",
+        mailgenContent: emailVerificationMailgenContent(
+            user.username,
+            `${req.protocol}://${req.get("host")}/api/v1/auth/verify-email/${unHashedToken}`,
+        ),
+    });
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "Email has been sent!"));
+});
+
+export {
+    registerUser,
+    loginUser,
+    logoutUser,
+    getCurrentUser,
+    verifyEmail,
+    resendEmailVerification,
+};
