@@ -6,7 +6,8 @@ const userRegisterValidator = () => {
             .trim()
             .notEmpty()
             .withMessage("Email is Required")
-            .isEmail.withMessage("Email is Invalid"),
+            .isEmail()
+            .withMessage("Email is Invalid"),
         body("username")
             .trim()
             .notEmpty()
@@ -20,4 +21,17 @@ const userRegisterValidator = () => {
     ];
 };
 
-export { userRegisterValidator };
+const userLoginValidator = () => {
+    return [
+        body("email")
+            .optional()
+            .trim()
+            .notEmpty()
+            .withMessage("Email is Required")
+            .isEmail()
+            .withMessage("Email is Invalid"),
+        body("password").trim().notEmpty().withMessage("Password is required"),
+    ];
+};
+
+export { userRegisterValidator, userLoginValidator };
