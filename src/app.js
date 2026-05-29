@@ -15,7 +15,7 @@ app.use(
         allowedHeaders: ["Authorization", "Content-Type"],
     }),
 );
-app.use(cookieParser);
+app.use(cookieParser());
 
 import healthCheckrouter from "./routes/healthCheck.routes.js";
 import authRouter from "./routes/auth.routes.js";
