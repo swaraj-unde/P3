@@ -16,12 +16,14 @@ import {
     createProjectValidator,
 } from "../validators/index.js";
 import {
+
     validateProjectPermissions,
     verifyJWT,
 } from "../middleware/auth.middleware.js";
 import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 
 const router = Router();
+
 
 router.use(verifyJWT);
 

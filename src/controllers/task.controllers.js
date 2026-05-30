@@ -143,7 +143,9 @@ const getTaskById = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, task, "Task Fetched Successfully"));
 });
 
-const updateTask = asyncHandler(async (req, res) => {});
+const updateTask = asyncHandler(async (req, res) => {
+    
+});
 
 const deleteTask = asyncHandler(async (req, res) => {});
 
