@@ -23,7 +23,7 @@ const getTasks = asyncHandler(async (req, res) => {
 
     const tasks = await Task.find({
         project: project._id,
-    }).populate("assginedTo", "avatar username fullName");
+    }).populate("assignedTo", "avatar username fullName");
 
     return res
         .status(200)
@@ -144,16 +144,42 @@ const getTaskById = asyncHandler(async (req, res) => {
 });
 
 const updateTask = asyncHandler(async (req, res) => {
+    const { taskId } = req.params;
+    const { newTitle, newDescription, newStatus, newAssignedTo } = req.body;
+
+    const updateFields = {};
+
+    if (newTitle !== undefined) updateFields.title = newTitle;
+    if (newDescription !== undefined) updateFields.description = newDescription;
+    if (newStatus !== undefined) updateFields.status = newStatus;
+    if (newAssignedTo !== undefined) updateFields.assignedTo = newAssignedTo;
+
+    if (Object.keys(updateFields).length === 0) {
+        throw new ApiError(400, "No fields provided for update");
+    }
+
+    const task = await Task.findByIdAndUpdate(taskId, updateFields, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!task) {
+        throw new ApiError(404, "Task Not Found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, task, "Task updated Successfully"));
+});
+const deleteTask = asyncHandler(async (req, res) => {
     
 });
 
-const deleteTask = asyncHandler(async (req, res) => {});
+const createSubtask = asyncHandler(async (req, res) => {});
 
-const createsubtask = asyncHandler(async (req, res) => {});
+const updateSubtask = asyncHandler(async (req, res) => {});
 
-const updatesubtask = asyncHandler(async (req, res) => {});
-
-const deletesubtask = asyncHandler(async (req, res) => {});
+const deleteSubtask = asyncHandler(async (req, res) => {});
 
 export {
     getTasks,
@@ -161,7 +187,7 @@ export {
     getTaskById,
     updateTask,
     deleteTask,
-    createsubtask,
-    updatesubtask,
-    deletesubtask,
+    createSubtask,
+    updateSubtask,
+    deleteSubtask,
 };
